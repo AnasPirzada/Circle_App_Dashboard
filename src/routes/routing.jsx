@@ -6,10 +6,15 @@ import Offers from '../pages/Offers/index.jsx';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <DashboardLayout />, // Use DashboardLayout directly if needed as the main layout
+    element: <Login />, // Display the login screen at the root
+  },
+
+  {
+    path: '/dashboard',
+    element: <DashboardLayout />,
     children: [
-      { path: '/dashboard/Offers', element: <Offers /> },
-      { path: '/dashboard/Logout', element: <Logout /> },
+      { path: 'Offers', element: <Offers /> },
+      { path: 'Logout', element: <Logout /> },
       // Add more nested routes as needed
     ],
   },
