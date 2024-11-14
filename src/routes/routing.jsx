@@ -12,7 +12,8 @@ export const router = createBrowserRouter([
       { path: "/dashboard/Offers", element: <Offers /> },
       { path: "/dashboard/Logout", element: <Logout /> },
       { path: "/dashboard/login", element: <Login /> },
-      // Add more nested routes as needed
+
+  
     ],
   },
 ]);
