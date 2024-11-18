@@ -145,15 +145,20 @@ const OfferDetails = () => {
         <p className='text-[#FFFFFF] text-lg font-bold'>
           Peoples buy ({offer.peopleBuying.length})
         </p>
-        <div className='flex mt-2 space-x-4'>
+        <div className='flex flex-wrap gap-4 mt-2 md:space-x-4'>
           {offer.peopleBuying.map((person, index) => (
-            <div key={index} className='flex items-center'>
+            <div
+              key={index}
+              className='flex flex-col md:flex-row items-center justify-center md:justify-normal'
+            >
               <img
                 src={person.avatar}
                 alt={person.name}
                 className='w-12 h-12 rounded-full object-cover border-2 border-[#4F4F4F]'
               />
-              <p className='text-sm mt-1 mx-2 text-[#FFFFFF]'>{person.name}</p>
+              <p className='text-sm mt-2 md:mt-0 mx-2 text-[#FFFFFF]'>
+                {person.name}
+              </p>
             </div>
           ))}
         </div>

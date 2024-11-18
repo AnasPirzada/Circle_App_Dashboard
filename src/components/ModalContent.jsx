@@ -47,7 +47,7 @@ const ModalContent = ({ isOpen, setIsOpen }) => {
                 animate={{ scale: 1, rotate: '0deg' }}
                 exit={{ scale: 0, rotate: '0deg' }}
                 onClick={e => e.stopPropagation()}
-                className='bg-[#383838] text-white p-6  rounded-lg shadow-xl w-full md:w-[70%] mx-4 cursor-default relative overflow-hidden'
+                className='bg-[#383838] text-white p-6 rounded-lg shadow-xl w-full md:w-[70%] mx-4 cursor-default relative max-h-screen overflow-y-auto'
               >
                 <form onSubmit={handleSubmit} className='space-y-4'>
                   <div className='border-2 border-dashed h-[320px] bg-[#414141] border-[#FFC491] rounded-lg p-4 flex flex-col justify-center text-center'>
