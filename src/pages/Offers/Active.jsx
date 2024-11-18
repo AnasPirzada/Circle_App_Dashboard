@@ -55,58 +55,60 @@ const Active = () => {
       </div>
 
       {offers.map(offer => (
-        <div key={offer.id}>
-          <Link to={`/dashboard/Offers/${offer.id}`}>
-            <div className='bg-[#414141] text-[#FFFFFF] p-6 rounded-lg shadow-lg space-y-4 md:flex md:justify-between md:items-start'>
-              <div className='md:w-2/3'>
-                <h2 className='text-xl font-semibold mb-2'>{offer.title}</h2>
-                <p className='text-sm mb-4'>
-                  <span className='font-semibold text-lg'>Description</span>
-                  <br />
-                  <span className='text-[#9C9C9C] text-sm'>
-                    {offer.description}
-                  </span>
-                </p>
-                <div className='flex items-center text-sm mb-2'>
-                  <span className='mr-2 text-sm text-[#9C9C9C]'>
-                    Offer for{' '}
-                    <span className='font-bold text-[#FFFFFF]'>
-                      {offer.offerFor}
+        <>
+          <div key={offer.id}>
+            <Link to={`/dashboard/Offers/${offer.id}`}>
+              <div className='bg-[#414141] text-[#FFFFFF] p-6 rounded-lg shadow-lg space-y-4 md:flex md:justify-between md:items-start'>
+                <div className='md:w-2/3'>
+                  <h2 className='text-xl font-semibold mb-2'>{offer.title}</h2>
+                  <p className='text-sm mb-4'>
+                    <span className='font-semibold text-lg'>Description</span>
+                    <br />
+                    <span className='text-[#9C9C9C] text-sm'>
+                      {offer.description}
                     </span>
-                  </span>
-                  <span>
-                    Interest{' '}
-                    <span className='font-bold text-[#FFFFFF]'>
-                      {offer.interest}
-                    </span>
-                  </span>
-                </div>
-                <div className='mt-2'>
-                  <p className='font-semibold mb-1 text-lg text-[#9C9C9C]'>
-                    Images
                   </p>
-                  <div className='flex flex-wrap gap-2'>
-                    {offer.images.map((image, imgIndex) => (
-                      <img
-                        key={imgIndex}
-                        src={image}
-                        alt={`img${imgIndex + 1}`}
-                        className='w-10 h-10 rounded-full object-cover bg-center'
-                      />
-                    ))}
+                  <div className='flex items-center text-sm mb-2'>
+                    <span className='mr-2 text-sm text-[#9C9C9C]'>
+                      Offer for{' '}
+                      <span className='font-bold text-[#FFFFFF]'>
+                        {offer.offerFor}
+                      </span>
+                    </span>
+                    <span>
+                      Interest{' '}
+                      <span className='font-bold text-[#FFFFFF]'>
+                        {offer.interest}
+                      </span>
+                    </span>
+                  </div>
+                  <div className='mt-2'>
+                    <p className='font-semibold mb-1 text-lg text-[#9C9C9C]'>
+                      Images
+                    </p>
+                    <div className='flex flex-wrap gap-2'>
+                      {offer.images.map((image, imgIndex) => (
+                        <img
+                          key={imgIndex}
+                          src={image}
+                          alt={`img${imgIndex + 1}`}
+                          className='w-10 h-10 rounded-full object-cover bg-center'
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
+                <div className='mt-4 md:mt-0 md:w-1/3 text-right'>
+                  <p className='text-lg font-bold text-[#9C9C9C]'>
+                    Total Price: {offer.totalPrice}
+                  </p>
+                  <p className='text-sm text-[#FFFFFF]'>{offer.date}</p>
+                </div>
               </div>
-              <div className='mt-4 md:mt-0 md:w-1/3 text-right'>
-                <p className='text-lg font-bold text-[#9C9C9C]'>
-                  Total Price: {offer.totalPrice}
-                </p>
-                <p className='text-sm text-[#FFFFFF]'>{offer.date}</p>
-              </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
           <hr className='bg-[#414141] border-1' />
-        </div>
+        </>
       ))}
       <ModalContent isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>

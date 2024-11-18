@@ -45,11 +45,26 @@ const OfferDetails = () => {
       totalPrice: '2500$',
       date: '23/12/2024',
       peopleBuying: [
-        'https://randomuser.me/api/portraits/women/1.jpg',
-        'https://randomuser.me/api/portraits/men/2.jpg',
-        'https://randomuser.me/api/portraits/women/3.jpg',
-        'https://randomuser.me/api/portraits/men/4.jpg',
-        'https://randomuser.me/api/portraits/women/5.jpg',
+        {
+          avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
+          name: 'Alice',
+        },
+        {
+          avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
+          name: 'Bob',
+        },
+        {
+          avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
+          name: 'Charlie',
+        },
+        {
+          avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
+          name: 'David',
+        },
+        {
+          avatar: 'https://randomuser.me/api/portraits/women/5.jpg',
+          name: 'Eve',
+        },
       ],
     },
     // Add more offers as needed
@@ -81,64 +96,64 @@ const OfferDetails = () => {
           className='w-full h-[520px] bg-center object-cover rounded-lg mb-4'
         />
       </div>
-      <div className='mx-auto w-72 gap-3 flex justify-between items-center'>
+      <div className='mx-auto gap-3 flex justify-center items-center'>
         {offer.images.slice(1).map((image, index) => (
           <img
             key={index}
             src={image}
             alt={`Additional ${index + 1}`}
-            className='w-[158px] h-[148px] object-cover rounded-lg'
+            className='w-[158px] h-[158px] object-cover rounded-lg'
           />
         ))}
       </div>
 
       <div className=' pt-4'>
-        <p className='text-[#9C9C9C] text-lg font-bold'>Details</p>
+        <p className='text-[#FFFFFF] text-lg font-bold'>Details</p>
 
         <div className='border-b border-[#4F4F4F] py-3'>
-          <p className='text-sm text-[#9C9C9C]'>Title</p>
+          <p className='text-sm text-[#BBBBBB]'>Title</p>
           <p className='text-lg font-semibold'>{offer.title}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
-          <p className='text-sm text-[#9C9C9C]'>Description</p>
+          <p className='text-sm text-[#BBBBBB]'>Description</p>
           <p className='text-lg'>{offer.description}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
-          <p className='text-sm text-[#9C9C9C]'>Offer for</p>
+          <p className='text-sm text-[#BBBBBB]'>Offer for</p>
           <p className='text-lg font-semibold'>{offer.offerFor}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
-          <p className='text-sm text-[#9C9C9C]'>Date</p>
+          <p className='text-sm text-[#BBBBBB]'>Date</p>
           <p className='text-lg font-semibold'>{offer.date}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
-          <p className='text-sm text-[#9C9C9C]'>Interest</p>
+          <p className='text-sm text-[#BBBBBB]'>Interest</p>
           <p className='text-lg font-semibold'>{offer.interest}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
-          <p className='text-sm text-[#9C9C9C]'>Total Price</p>
+          <p className='text-sm text-[#BBBBBB]'>Total Price</p>
           <p className='text-lg font-semibold'>{offer.totalPrice}</p>
         </div>
       </div>
 
       <div className='mt-6'>
-        <p className='text-[#9C9C9C] text-lg font-bold'>
+        <p className='text-[#FFFFFF] text-lg font-bold'>
           Peoples buy ({offer.peopleBuying.length})
         </p>
         <div className='flex mt-2 space-x-4'>
           {offer.peopleBuying.map((person, index) => (
-            <div key={index} className='flex flex-col items-center'>
+            <div key={index} className='flex items-center'>
               <img
                 src={person.avatar}
                 alt={person.name}
                 className='w-12 h-12 rounded-full object-cover border-2 border-[#4F4F4F]'
               />
-              <p className='text-sm mt-1 text-[#FFFFFF]'>{person.name}</p>
+              <p className='text-sm mt-1 mx-2 text-[#FFFFFF]'>{person.name}</p>
             </div>
           ))}
         </div>
