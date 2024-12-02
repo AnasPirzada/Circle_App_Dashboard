@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
-  const [activeRoute, setActiveRoute] = useState('');
+  const [activeRoute, setActiveRoute] = useState(
+    '/dashboard/activity-group-info'
+  ); // Default active state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar visibility
   const location = useLocation();
 
@@ -20,8 +22,10 @@ const Sidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar visibility
   };
 
-  // Check if the route is inside the /dashboard/Offers section
-  const isOfferActive = activeRoute.startsWith('/dashboard/Offers');
+  // Check if the current route is part of the Dashboard
+  const isDashboardActive =
+    activeRoute.startsWith('/dashboard') &&
+    !activeRoute.startsWith('/dashboard/Offers');
 
   return (
     <>
@@ -48,12 +52,65 @@ const Sidebar = () => {
           <img src='/Logo.svg' alt='Logo' />
         </NavLink>
         <div className='flex flex-col space-y-6 w-full'>
+          {/* Dashboard Section */}
           <div className='flex flex-col space-y-2'>
             <NavLink
-              to='/dashboard/Offers'
-              onClick={() => handleNavClick('/dashboard/Offers')}
+              to='/dashboard'
+              onClick={() => handleNavClick('/dashboard')}
               className={`flex items-center space-x-2 ${
-                isOfferActive ? 'text-[#FFC491]' : 'text-gray-400'
+                isDashboardActive ? 'text-[#FFC491]' : 'text-gray-400'
+              }`}
+            >
+              <img src='/Explore.svg' alt='Dashboard Icon' />
+              <span className='text-xl'>Dashboard</span>
+            </NavLink>
+            <div className='pl-10 flex flex-col space-y-1'>
+              <NavLink
+                to='/dashboard/activity-group-info'
+                onClick={() => handleNavClick('/dashboard/activity-group-info')}
+                className={`text-lg flex items-center ${
+                  activeRoute === '/dashboard/activity-group-info'
+                    ? 'text-[#FFC491]'
+                    : 'text-[#A7A7A7]'
+                }`}
+              >
+                <span>Activity Group Info</span>
+              </NavLink>
+              <NavLink
+                to='/dashboard/view-offers'
+                onClick={() => handleNavClick('/dashboard/view-offers')}
+                className={`text-lg flex items-center ${
+                  activeRoute === '/dashboard/view-offers'
+                    ? 'text-[#FFC491]'
+                    : 'text-[#A7A7A7]'
+                }`}
+              >
+                <span>View - Offers</span>
+              </NavLink>
+              <NavLink
+                to='/dashboard/activity-by-interest'
+                onClick={() =>
+                  handleNavClick('/dashboard/activity-by-interest')
+                }
+                className={`text-lg flex items-center ${
+                  activeRoute === '/dashboard/activity-by-interest'
+                    ? 'text-[#FFC491]'
+                    : 'text-[#A7A7A7]'
+                }`}
+              >
+                <span>Activity by Interest</span>
+              </NavLink>
+            </div>
+          </div>
+          {/* Offers Section */}
+          <div className='flex flex-col space-y-2'>
+            <NavLink
+              to='/dashboard/Offers/Active'
+              onClick={() => handleNavClick('/dashboard/Offers/Active')}
+              className={`flex items-center space-x-2 ${
+                activeRoute.startsWith('/dashboard/Offers/Active')
+                  ? 'text-[#FFC491]'
+                  : 'text-gray-400'
               }`}
             >
               <img src='/Explore.svg' alt='Explore Icon' />
