@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import apiClient from '../apiClient'; // Import apiClient for API requests
 
 const ModalContent = ({ isOpen, setIsOpen }) => {
   const [images, setImages] = useState([]);
@@ -11,11 +13,42 @@ const ModalContent = ({ isOpen, setIsOpen }) => {
     interest: '',
     totalPrice: '',
   });
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); // Store image URLs after upload
 
-  const handleImageUpload = event => {
+  const handleImageUpload = async event => {
     const files = Array.from(event.target.files);
-    const imageUrls = files.map(file => URL.createObjectURL(file));
-    setImages([...images, ...imageUrls]);
+
+    // Show previews and append to existing images
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    setImages(prevImages => [...prevImages, ...newPreviews]);
+
+    const uploadedUrls = [...uploadedImageUrls];
+
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('images', file);
+
+        const response = await apiClient.post('/api/upload/images', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (response.status === 200) {
+          uploadedUrls.push(response.data.imageUrls[0]); // Ensure it's appending only the URL string
+        }
+      }
+      setUploadedImageUrls(uploadedUrls);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+
+  // image privew and remove
+  const handleImageClick = index => {
+    setImages(prevImages => prevImages.filter((_, i) => i !== index));
+    setUploadedImageUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   };
 
   const handleChange = e => {
@@ -24,14 +57,47 @@ const ModalContent = ({ isOpen, setIsOpen }) => {
       [e.target.name]: e.target.value,
     });
   };
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    // Submit form logic here
+    setIsLoading(true);
+
+    const offerData = {
+      title: formData.title,
+      description: formData.description,
+      numberOfPeople: formData.offerFor,
+      startingDate: new Date(formData.date).toISOString(),
+      endingDate: new Date(formData.date).toISOString(),
+      interest: formData.interest,
+      price: parseFloat(formData.totalPrice),
+      imageUrls: uploadedImageUrls,
+    };
+
+    try {
+      const response = await apiClient.post(
+        '/api/admin/create-offer',
+        offerData
+      );
+      console.log(response);
+      toast.success(response.data.message);
+      if (response.status === 201) {
+        console.log('Offer created successfully:', response.data);
+        setIsOpen(false);
+      } else {
+        console.error('Error creating offer:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error creating offer:', error);
+      toast.error('Error creating offer:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div>
+      <ToastContainer />
       <AnimatePresence>
         {isOpen && (
           <>
@@ -65,7 +131,7 @@ const ModalContent = ({ isOpen, setIsOpen }) => {
                           <img src='/Picture.svg' alt='' />
                         </div>
                         Drop your image here, or{' '}
-                        <span className='text-whie underline'>browse</span>
+                        <span className='text-white underline'>browse</span>
                       </div>
                     </label>
                   </div>
@@ -76,11 +142,13 @@ const ModalContent = ({ isOpen, setIsOpen }) => {
                         key={index}
                         src={image}
                         alt='uploaded preview'
-                        className='w-16 h-16 object-cover rounded-lg'
+                        className='w-16 h-16 object-cover rounded-lg cursor-pointer'
+                        onClick={() => handleImageClick(index)}
                       />
                     ))}
                   </div>
 
+                  {/* Form Inputs */}
                   <div>
                     <label className='block text-sm font-semibold mb-1'>
                       Title
@@ -171,16 +239,17 @@ const ModalContent = ({ isOpen, setIsOpen }) => {
                   <div className='flex justify-between mt-6'>
                     <button
                       type='button'
-                      className='px-10 rounded-full py-2 border border-[#FFC491] text-white  hover:bg-gray-600'
+                      className='px-10 rounded-full py-2 border border-[#FFC491] text-white hover:bg-gray-600'
                       onClick={() => setIsOpen(false)}
                     >
                       Cancel
                     </button>
                     <button
                       type='submit'
-                      className='px-10 py-2 bg-[#FFC491] text-black rounded-full '
+                      className='px-10 py-2 bg-[#FFC491] text-black rounded-full'
+                      disabled={isLoading}
                     >
-                      Save
+                      {isLoading ? 'Saving...' : 'Save'}
                     </button>
                   </div>
                 </form>

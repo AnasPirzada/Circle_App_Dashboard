@@ -1,80 +1,16 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 const OfferDetails = () => {
   const { id } = useParams(); // Retrieve the offer id from the URL
-  const offers = [
-    {
-      id: 1,
-      title: 'Early Bird Offer',
-      description:
-        'Lorem ipsum dolor sit amet consectetur. Eget aliquam suspendisse ultrices a mattis vitae. Adipiscing id vestibulum ultrices lorem. Nibh dignissim bibendum aAdipi.',
-      offerFor: '10 People',
-      interest: 'Music',
-      images: [
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        // Add additional image URLs here
-      ],
-      totalPrice: '2500$',
-      date: '23/12/2024',
-      peopleBuying: [
-        'https://randomuser.me/api/portraits/women/1.jpg',
-        'https://randomuser.me/api/portraits/men/2.jpg',
-        'https://randomuser.me/api/portraits/women/3.jpg',
-        'https://randomuser.me/api/portraits/men/4.jpg',
-        'https://randomuser.me/api/portraits/women/5.jpg',
-      ],
-    },
-    {
-      id: 2,
-      title: 'Early Bird Offer',
-      description:
-        'Lorem ipsum dolor sit amet consectetur. Eget aliquam suspendisse ultrices a mattis vitae. Adipiscing id vestibulum ultrices lorem. Nibh dignissim bibendum aAdipi.',
-      offerFor: '10 People',
-      interest: 'Music',
-      images: [
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        // Add additional image URLs here
-      ],
-      totalPrice: '2500$',
-      date: '23/12/2024',
-      peopleBuying: [
-        {
-          avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-          name: 'Alice',
-        },
-        {
-          avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-          name: 'Bob',
-        },
-        {
-          avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
-          name: 'Charlie',
-        },
-        {
-          avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
-          name: 'David',
-        },
-        {
-          avatar: 'https://randomuser.me/api/portraits/women/5.jpg',
-          name: 'Eve',
-        },
-      ],
-    },
-    // Add more offers as needed
-  ];
+  const location = useLocation(); // Use location to access state
+  const offer = location.state?.offer; // Access the passed offer from state
 
-  // Find the offer that matches the `id` from the URL
-  const offer = offers.find(offer => offer.id === parseInt(id));
+  console.log(offer); // Log the offer data to verify
 
+  // If the offer is not found in state, show a fallback
   if (!offer) {
-    return <p>Offer not found!</p>; // Handle the case where the offer doesn't exist
+    return <p>Offer not found!</p>;
   }
 
   return (
@@ -91,20 +27,23 @@ const OfferDetails = () => {
 
       <div className='text-center mt-4'>
         <img
-          src={offer.images[0]}
+          src={offer.imageUrls[0] || 'default-placeholder.png'}
           alt='Main'
           className='w-full h-[520px] bg-center object-cover rounded-lg mb-4'
         />
       </div>
       <div className='mx-auto gap-3 flex justify-center items-center'>
-        {offer.images.slice(1).map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt={`Additional ${index + 1}`}
-            className='w-[158px] h-[158px] object-cover rounded-lg'
-          />
-        ))}
+        {offer.imageUrls
+          ?.slice(1)
+          .map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Additional ${index + 1}`}
+              className='w-[158px] h-[158px] object-cover rounded-lg'
+            />
+          )) || <p>No additional images available</p>}{' '}
+        {/* Fallback */}
       </div>
 
       <div className=' pt-4'>
@@ -122,12 +61,12 @@ const OfferDetails = () => {
 
         <div className='border-b border-[#4F4F4F] py-3'>
           <p className='text-sm text-[#BBBBBB]'>Offer for</p>
-          <p className='text-lg font-semibold'>{offer.offerFor}</p>
+          <p className='text-lg font-semibold'>{offer.numberOfPeople}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
           <p className='text-sm text-[#BBBBBB]'>Date</p>
-          <p className='text-lg font-semibold'>{offer.date}</p>
+          <p className='text-lg font-semibold'>{offer.startingDate}</p>
         </div>
 
         <div className='border-b border-[#4F4F4F] py-3'>
@@ -137,30 +76,30 @@ const OfferDetails = () => {
 
         <div className='border-b border-[#4F4F4F] py-3'>
           <p className='text-sm text-[#BBBBBB]'>Total Price</p>
-          <p className='text-lg font-semibold'>{offer.totalPrice}</p>
+          <p className='text-lg font-semibold'>{offer.price}</p>
         </div>
       </div>
 
       <div className='mt-6'>
         <p className='text-[#FFFFFF] text-lg font-bold'>
-          Peoples buy ({offer.peopleBuying.length})
+          People Buying ({offer.buyers?.length || 0})
         </p>
         <div className='flex flex-wrap gap-4 mt-2 md:space-x-4'>
-          {offer.peopleBuying.map((person, index) => (
+          {offer.buyers?.map((buyer, index) => (
             <div
-              key={index}
+              key={buyer.id || index}
               className='flex flex-col md:flex-row items-center justify-center md:justify-normal'
             >
               <img
-                src={person.avatar}
-                alt={person.name}
+                src={buyer.profilePicture || '/default-avatar.png'} // Use profilePicture for avatar
+                alt={buyer.name || 'Anonymous'}
                 className='w-12 h-12 rounded-full object-cover border-2 border-[#4F4F4F]'
               />
               <p className='text-sm mt-2 md:mt-0 mx-2 text-[#FFFFFF]'>
-                {person.name}
+                {buyer.name || 'Anonymous'} {/* Display the name */}
               </p>
             </div>
-          ))}
+          )) || <p>No buyers yet</p>}
         </div>
       </div>
     </div>

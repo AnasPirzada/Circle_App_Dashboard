@@ -44,10 +44,30 @@ const VerifyPasswordApi = async data => {
     throw error;
   }
 };
+const GetActiveOffers = async () => {
+  try {
+    const response = await apiClient.get(`api/admin/offers?active=true`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
+const GetCompleteOffers = async () => {
+  try {
+    const response = await apiClient.get(`api/admin/offers?active=false`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
 
 export default {
   LoginApi,
   Forgetapi,
   OtpverifyApi,
   VerifyPasswordApi,
+  GetActiveOffers,
+  GetCompleteOffers,
 };
