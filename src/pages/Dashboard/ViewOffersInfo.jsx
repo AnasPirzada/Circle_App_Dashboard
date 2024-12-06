@@ -1,160 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import apiClient from '../../apiClient.js';
 
 const ViewOffersInfo = () => {
-  const data = [
-    {
-      typeGroup: 'Friend',
-      NumGroup: 154,
-      AvgSizeGroup: 34,
-      avgSize: 5,
-      messages: 447,
-      activeUsers: 120,
-      messageActivity: 'Daily',
-      eventsPlanned: 15,
-    },
-    {
-      typeGroup: 'Organization',
-      NumGroup: 130,
-      AvgSizeGroup: 44,
-      avgSize: 3,
-      messages: 877,
-      activeUsers: 98,
-      messageActivity: 'Weekly',
-      eventsPlanned: 20,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    // Add more rows with updated data...
-  ];
-
+  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 14;
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  // Calculate data for the current page
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  const rowsPerPage = 10; // Items per page for API request
 
-  // Calculate total pages
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await apiClient.get(
+          `/api/admin/offer-stats?itemsPerPage=${rowsPerPage}&currentPage=${currentPage}`
+        );
+
+        const apiData = response?.data; // Data is in the 'data' field of the response
+
+        // Adjust the validation to check for success based on response status, not inside 'data'
+        if (response.status !== 200 || !apiData) {
+          throw new Error('Unexpected API response structure');
+        }
+
+        toast.success(apiData.message || 'Data fetched successfully!');
+
+        const { data = [], totalPages: total = 1 } = apiData; // Destructure data and totalPages
+
+        setData(data);
+        setTotalPages(total);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+
+        if (err.response) {
+          toast.error(
+            `Error: ${err.response.status} - ${
+              err.response.data?.message || 'Server Error'
+            }`
+          );
+        } else if (err.request) {
+          toast.error('Network error: Please check your connection.');
+        } else {
+          toast.error('An unexpected error occurred. Please try again later.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
@@ -163,6 +60,17 @@ const ViewOffersInfo = () => {
   const handlePreviousPage = () => {
     if (currentPage > 1) setCurrentPage(prev => prev - 1);
   };
+
+  const renderSkeletonRows = () =>
+    Array.from({ length: rowsPerPage }).map((_, index) => (
+      <tr key={index} className='animate-pulse'>
+        {[...Array(7)].map((_, colIndex) => (
+          <td key={colIndex} className='px-4 py-2 border border-gray-600'>
+            <div className='h-4 bg-gray-300 rounded'></div>
+          </td>
+        ))}
+      </tr>
+    ));
 
   return (
     <div>
@@ -201,31 +109,33 @@ const ViewOffersInfo = () => {
               </tr>
             </thead>
             <tbody className='bg-[#414141] text-white'>
-              {currentData.map((row, index) => (
-                <tr key={index} className='hover:bg-[#383838]'>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.typeGroup}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.NumGroup}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.AvgSizeGroup}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.avgSize}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.messages}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.activeUsers}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.messageActivity}
-                  </td>
-                </tr>
-              ))}
+              {loading
+                ? renderSkeletonRows()
+                : data.map((row, index) => (
+                    <tr key={index} className='hover:bg-[#383838]'>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.totalOffers}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.interest}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.groupsReach}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.purchasedCircles}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.totalRevenue}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.avgDaysBetweenPurchases}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.eventsCount}
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>

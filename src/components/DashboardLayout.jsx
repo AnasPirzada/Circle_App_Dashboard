@@ -10,11 +10,11 @@ const DashboardLayout = () => {
   }
   return (
     <div className='grid grid-cols-12 h-screen'>
-      <div className='col-span-12 md:col-span-2 bg-[#383838]'>
+      <div className='col-span-12 md:col-span-3 lg:col-span-4 xl:col-span-3 2xl:col-span-2 bg-[#383838] overflow-y-hidden'>
         <Sidebar />
       </div>
 
-      <main className='col-span-12 md:col-span-10 p-2 md:p-6 overflow-auto bg-[#1E1E1E]'>
+      <main className='col-span-12 md:col-span-9 lg:col-span-8 xl:col-span-9 2xl:col-span-10 p-4  overflow-auto bg-[#1E1E1E]'>
         <Outlet />
       </main>
     </div>

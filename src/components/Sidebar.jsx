@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const [activeRoute, setActiveRoute] = useState(
@@ -7,6 +7,7 @@ const Sidebar = () => {
   ); // Default active state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar visibility
   const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Update active route based on current location
   useEffect(() => {
@@ -21,7 +22,10 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar visibility
   };
-
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all data in localStorage
+    navigate('/login'); // Redirect to the login page
+  };
   // Check if the current route is part of the Dashboard
   const isDashboardActive =
     activeRoute.startsWith('/dashboard') &&
@@ -165,8 +169,7 @@ const Sidebar = () => {
 
           {/* Logout */}
           <NavLink
-            to='/dashboard/Logout'
-            onClick={() => handleNavClick('/dashboard/Logout')}
+            onClick={handleLogout}
             className={`flex items-center space-x-2 ${
               activeRoute === '/dashboard/Logout'
                 ? 'text-[#FFC491]'

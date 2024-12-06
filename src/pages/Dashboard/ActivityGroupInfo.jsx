@@ -1,160 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import apiClient from '../../apiClient.js';
 
 const ActivityGroupInfo = () => {
-  const data = [
-    {
-      typeGroup: 'Friend',
-      NumGroup: 154,
-      AvgSizeGroup: 34,
-      avgSize: 5,
-      messages: 447,
-      activeUsers: 120,
-      messageActivity: 'Daily',
-      eventsPlanned: 15,
-    },
-    {
-      typeGroup: 'Organization',
-      NumGroup: 130,
-      AvgSizeGroup: 44,
-      avgSize: 3,
-      messages: 877,
-      activeUsers: 98,
-      messageActivity: 'Weekly',
-      eventsPlanned: 20,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    {
-      typeGroup: 'Family',
-      NumGroup: 185,
-      AvgSizeGroup: 39,
-      avgSize: 6,
-      messages: 185,
-      activeUsers: 75,
-      messageActivity: 'Monthly',
-      eventsPlanned: 10,
-    },
-    // Add more rows with updated data...
-  ];
-
+  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 14;
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  // Calculate data for the current page
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  const rowsPerPage = 10; // Items per page for API request
 
-  // Calculate total pages
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await apiClient.get(
+          `/api/admin/type-stats?activeDays=3&dayRange=7&minMessages=5&itemsPerPage=${rowsPerPage}&currentPage=${currentPage}`
+        );
+
+        console.log(response);
+
+        if (response?.data?.status !== 'success' || !response?.data?.data) {
+          throw new Error('Unexpected API response structure');
+        }
+
+        toast.success(response.data.message || 'Data fetched successfully!');
+
+        const apiData = response?.data.data;
+        setData(apiData.types || []);
+        setTotalPages(apiData.totalPages || 1);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+
+        if (err.response) {
+          toast.error(
+            `Error: ${err.response.status} - ${
+              err.response.data?.message || 'Server Error'
+            }`
+          );
+        } else if (err.request) {
+          toast.error('Network error: Please check your connection.');
+        } else {
+          toast.error('An unexpected error occurred. Please try again later.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
@@ -163,6 +58,17 @@ const ActivityGroupInfo = () => {
   const handlePreviousPage = () => {
     if (currentPage > 1) setCurrentPage(prev => prev - 1);
   };
+
+  const renderSkeletonRows = () =>
+    Array.from({ length: rowsPerPage }).map((_, index) => (
+      <tr key={index} className='animate-pulse'>
+        {[...Array(8)].map((_, colIndex) => (
+          <td key={colIndex} className='px-4 py-2 border border-gray-600'>
+            <div className='h-4 bg-gray-300 rounded'></div>
+          </td>
+        ))}
+      </tr>
+    ));
 
   return (
     <div>
@@ -199,7 +105,7 @@ const ActivityGroupInfo = () => {
                 </th>
                 <th className='px-4 py-2 border border-gray-600'>
                   Message Activity <br />
-                  (Daily/Weekly/Monthly)
+                  (Daily / Weekly / Monthly)
                 </th>
                 <th className='px-4 py-2 border border-gray-600'>
                   Events Planned
@@ -207,38 +113,45 @@ const ActivityGroupInfo = () => {
               </tr>
             </thead>
             <tbody className='bg-[#414141] text-white'>
-              {currentData.map((row, index) => (
-                <tr key={index} className='hover:bg-[#383838]'>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.typeGroup}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.NumGroup}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.AvgSizeGroup}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.avgSize}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.messages}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.activeUsers}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.messageActivity}
-                  </td>
-                  <td className='px-4 py-2 border border-gray-600'>
-                    {row.eventsPlanned}
-                  </td>
-                </tr>
-              ))}
+              {loading
+                ? renderSkeletonRows()
+                : data.map((row, index) => (
+                    <tr key={index} className='hover:bg-[#383838]'>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.type}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.groupCount}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.averageGroupSize}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.averageGroupSize}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.messageCount}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.activeUsers}
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        <div className='flex justify-around'>
+                          <span>
+                            {row.messageActivity?.daily || 0}D / &nbsp;
+                            {row.messageActivity?.weekly || 0}W /
+                            {row.messageActivity?.monthly || 0}M
+                          </span>
+                        </div>
+                      </td>
+                      <td className='px-4 py-2 border border-gray-600'>
+                        {row.eventCount}
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>
-
         {/* Pagination */}
         <div className='flex justify-center items-center mt-4'>
           <button onClick={handlePreviousPage} disabled={currentPage === 1}>

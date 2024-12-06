@@ -1,13 +1,14 @@
+import { toast } from 'react-toastify';
 import apiClient from '../apiClient.js';
 
 const LoginApi = async data => {
   try {
     const response = await apiClient.post(`/api/admin/login`, data); // Pass data in post request
-    console.log(response);
-
     return response.data;
   } catch (error) {
     console.error('Error fetching user:', error);
+    toast.error(error.response.data.message);
+
     throw error;
   }
 };
